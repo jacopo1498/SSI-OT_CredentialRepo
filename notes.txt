@@ -1,0 +1,8 @@
+0 DEPLOY THE REGISTRY
+1 create did for issuer
+2 create did for holder 
+3 create vc signed by issuer with holder info
+
+
+
+ create did for verifier -> not necessary you only need the jwt and a didresolver to verify a VC
