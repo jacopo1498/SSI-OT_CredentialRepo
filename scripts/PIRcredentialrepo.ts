@@ -24,6 +24,7 @@ const vcResolver = getResolver.getResolver(
 );
 const Res = new Resolver(vcResolver)
 
+/* this is the credential repository example / "hot wallets" */
 
 const vcPayload: JwtCredentialPayload = {
     sub: 'did:ethr:0x7a69:0x02ba5734d8f7091719471e7f7ed6b9df170dc70cc661ca05e688601ad984f068b0',
@@ -40,6 +41,15 @@ const vcPayload: JwtCredentialPayload = {
 vcPayload['vc']['credentialSubject']['nome']="pincopanco-encryptato";
 vcPayload['vc']['credentialSubject']['cognome']="pencopunco-encryptato";
 
+/* 0-choose an ID and a key for a VC to use (store binding ID-VC name)
+   1-take my VC and encrypt them, append ID to recognize them later
+   2-give server encrypted VC with an ID  
+   3-server extract ID (wich has no meaning for him)
+   4-START OF OT, server presents */
+
+
+
+
 
 (async () => {
     const vcJwt = await createVerifiableCredentialJwt(vcPayload, issuer);
@@ -47,4 +57,3 @@ vcPayload['vc']['credentialSubject']['cognome']="pencopunco-encryptato";
     const verifiedCredential= await verifyCredential(vcJwt, Res,{});
     console.log(verifiedCredential)
 })();
-

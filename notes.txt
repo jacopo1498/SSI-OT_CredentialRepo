@@ -2,7 +2,18 @@
 1 create did for issuer
 2 create did for holder 
 3 create vc signed by issuer with holder info
-
-
+4 verify it (same file)
 
  create did for verifier -> not necessary you only need the jwt and a didresolver to verify a VC
+ 
+ now we need to take these credentials and send them somewhere with OT (same file?) 
+ OT extention
+
+ OT WITH CRED REPO
+   0-choose an ID and a key for a VC to use (store binding ID-VC name)
+   1-take my VC and encrypt them, append ID to recognize them later
+   2-give server encrypted VC with an ID  
+   3-server extract ID (wich has no meaning for him)
+   4-START OF OT, server presents ID's to choose
+   5-i recognize an ID and choose the index appropriately (receiver does not know this)
+   6-throught OT i receive the desired VC and i decrypt it whith the corresponding key
