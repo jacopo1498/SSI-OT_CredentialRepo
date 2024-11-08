@@ -27,9 +27,10 @@ const Res = new Resolver(vcResolver)
 
 const vcPayload: JwtCredentialPayload = {
     sub: 'did:ethr:0x7a69:0x02ba5734d8f7091719471e7f7ed6b9df170dc70cc661ca05e688601ad984f068b0',
+    iat: Math.floor(Date.now() / 1000), // Current time in seconds
     vc: {
-      '@context': ['https://www.w3.org/2018/credentials/v1'],
-      type: ['VerifiableCredential'],
+      '@context': ["https://www.w3.org/ns/credentials/v2"],
+      type: ['VerifiableCredential', 'IdentityCard - like'],
       credentialSubject: {
       }
     }
@@ -37,8 +38,8 @@ const vcPayload: JwtCredentialPayload = {
 
 
 //prepari la vc con la roba base (metadata, header ,ecc...) poi aggiungi gli attributi che ti servono dopo
-vcPayload['vc']['credentialSubject']['nome']="pincopanco-encryptato";
-vcPayload['vc']['credentialSubject']['cognome']="pencopunco-encryptato";
+vcPayload['vc']['credentialSubject']['nome']="pincopanco";
+vcPayload['vc']['credentialSubject']['cognome']="pencopunco";
 
 
 (async () => {
