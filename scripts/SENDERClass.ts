@@ -10,7 +10,7 @@ export class StoreEncVC {
 
     private extractid(encryptedData: Buffer): string|undefined{
         const idCodeBuffer = encryptedData.subarray(-32);  // Extract the last 32 bytes as ID code
-        const iddata = idCodeBuffer.toString('utf-8');
+        const iddata = idCodeBuffer.toString('hex');
         if (!iddata){
             console.error("error in the retrival of the id");
             return;

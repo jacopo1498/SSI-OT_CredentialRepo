@@ -51,17 +51,17 @@ export class StoreKey {
             cipher.update(vc),
             cipher.final(),
         ]);
-        // Ensure the ID is exactly 32 bytes, trimming or padding as needed
-        const fixedIdCode = Buffer.alloc(32); // Create a fixed 32-byte buffer
-        fixedIdCode.write(id, 0, 'utf-8');  // Write the ID to the buffer
+        // Convert hex ID to a UTF-8 string (or directly to UTF-8 buffer if preferred)
+        const idBufferHex = Buffer.from(id, 'hex');  // First, hex to buffer
 
         // Concatenate IV, encrypted data, and fixed-size ID code
-        return Buffer.concat([iv, encryptedData, fixedIdCode]);
+        return Buffer.concat([iv, encryptedData, idBufferHex]);
     }
 
     // Stores the encrypted VC key with a unique ID as the index
-    public storeVC(vc: string,customName: string){
+    public storeVCkey(vc: string,customName: string){
         const id = this.generateVCID(vc);
+        console.log("SAVED ID "+ id);
         if (!id){
             console.error("error in the generation of the ID");
             return;
@@ -83,7 +83,7 @@ export class StoreKey {
         const iv = encryptedData.subarray(0, 16);  // Extract IV from the first 16 bytes
         const encryptedVC = encryptedData.subarray(16, -32);  // Extract encrypted data portion
         const idCodeBuffer = encryptedData.subarray(-32);  // Extract the last 32 bytes as ID code
-        const vcdata = (this.retrieveVCdata(idCodeBuffer.toString('utf-8')));
+        const vcdata = (this.retrieveVCdata(idCodeBuffer.toString('hex')));
         if (!vcdata){
             console.error("error in the retrival of the key");
             return;

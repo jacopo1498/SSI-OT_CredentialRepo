@@ -12,7 +12,7 @@
  OT WITH CRED REPO
    0-choose an ID and a key for a VC to use (store binding ID-VC name) DONE
    1-take my VC and encrypt them, append ID to recognize them later DONE
-   2-give server encrypted VC with an ID  done 
+   2-give server encrypted VC with an ID  DONE 
    3-server extract ID (wich has no meaning for him) almost
    4-START OF OT, server presents ID's to choose
    5-i recognize an ID and choose the index appropriately (receiver does not know this)
