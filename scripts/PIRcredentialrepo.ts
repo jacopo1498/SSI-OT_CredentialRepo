@@ -6,6 +6,9 @@ import { JwtCredentialPayload, createVerifiableCredentialJwt, verifyCredential }
 import { StoreKey } from './RECEIVERClass';
 import { StoreEncVC } from './SENDERClass';
 
+//this is necessary for ot... basically simulates communication with a dummy socket curtesy of wyatt-howe
+var IO = require('./io-example.js');
+
 //this is just to show things in the terminal in a nicer way
 const Color = {
     Reset: "\x1b[0m",
@@ -125,6 +128,9 @@ vcPayload3['vc']['credentialSubject']['TaxBrachet']="5A";
    4-START OF OT, server presents ID's to choose
    5-i recognize an ID and choose the index appropriately (receiver does not know this)
    6-throught OT i receive the desired VC and i decrypt it whith the corresponding key
+
+    SENDER (CRED REPO)     <---------->     RECEIVER (USER)
+
    */
 
 //ID of VC: combination of iss, sub, iat (issuanceDate) -> hash? (+salt just in case)
@@ -134,8 +140,11 @@ vcPayload3['vc']['credentialSubject']['TaxBrachet']="5A";
 async function main() {
     const savedVCK_receiver = new StoreKey;
     const savedEVC_sender = new StoreEncVC;
+    const N = 3;
+    const op_id = '1in3ot';  
 
-
+    //RECEIVER IS CYAN
+    //SENDER IS PURPLE
 
     //user part
     //user encripts all the vc and keeps track of the matching between ID - key - name
@@ -173,6 +182,7 @@ async function main() {
     if(!savedEVC_sender.storeEVC(EncVC0!) || !savedEVC_sender.storeEVC(EncVC1!) || !savedEVC_sender.storeEVC(EncVC2!)){
         console.error("error in storing the Enc VC");
     }
+
     console.log(colorString(Color.FgWhite, "stored vc in the cred rep:"));
     const ids = savedEVC_sender.listAllIds();
     for (let i = 0; i < ids.length; i++) {
@@ -180,12 +190,47 @@ async function main() {
     }
 
     //now OT starts, sender (cred repo) must not know wich id th sender chooses
-    //sender reads the vc stored int he repo and chooses the one he whants
-    console.log(colorString(Color.FgWhite, "sender reads avaliable vc:"));
+    //sender reads the vc stored int he repo and receiver chooses the one he whants
+    console.log(colorString(Color.FgWhite, "receiver reads avaliable vc:"));
     for (let i = 0; i < ids.length; i++) {
-        console.log(colorString(Color.FgCyan,ids[i]));
+        console.log(colorString(Color.FgMagenta,ids[i]));
         console.log(colorString(Color.FgCyan,savedVCK_receiver.getNameVC(ids[i])!));
     }
+
+    //now receiver chooses the desired vc let's say 3
+    const sender_choice = 1;
+    let rec_vc = "";
+    console.log(colorString(Color.FgCyan,"\nI choose secret n. " + (sender_choice)));
+    
+    //OT starts
+    const OT = require('1-out-of-n')(IO);
+
+    await OT.then(async function (OT: any) {
+
+        /*
+         *  The sender (cred repo) calls:
+         */
+        OT.send( savedEVC_sender.listAllEncryptedVCs(), N, op_id);
+      
+      
+        /*
+         *  The receiver (holder) calls:
+         */
+        await OT.receive(sender_choice - 1, N, op_id).then(async (receivedData: Uint8Array) => {
+            // Convert Uint8Array to Buffer
+            const encryptedVCBuffer = Buffer.from(receivedData);
+        
+            // Now `encryptedVCBuffer` is a Buffer and can be used with decryption functions
+            console.log("Secret #"+sender_choice+" as a Buffer:", encryptedVCBuffer);
+        
+            // Proceed with decryption
+            const decryptedVC = savedVCK_receiver.decryptVC(encryptedVCBuffer); // replace with your decryption function
+            console.log("Decrypted VC:", decryptedVC?.vc); // or any other encoding as needed
+            rec_vc = decryptedVC?.vc!;
+            const verifiedCredentialrec = await verifyCredential(rec_vc, Res, {});
+            console.log("Verified Credential:", verifiedCredentialrec);
+        });
+      });
 
 
 };

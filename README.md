@@ -7,9 +7,9 @@ The credential repository is an entity responsible for securely storing the hold
 
 This credential repository can be implemented in a self-hosted way (thus, as a personal wallet) or through an external service that manages storage on behalf of the holder. This might seem counter-intuitive to the concept of SSI (self-sovereign identities), but there may be valid reasons for doing so:
 
-    Some users might prefer the convenience of an external custodian that offers an easier setup compared to self-hosting, perhaps trusting its capability to securely protect stored VCs more than their own.
+-Some users might prefer the convenience of an external custodian that offers an easier setup compared to self-hosting, perhaps trusting its capability to securely protect stored VCs more than their own.
 
-    Additionally, storing VCs in the cloud can serve as a useful backup. Imagine a self-hosting user loses their device...
+-Additionally, storing VCs in the cloud can serve as a useful backup. Imagine a self-hosting user loses their device...
 
 The Trust Model for VCs states the following regarding credential repositories: "The holder expects the credential repository to store credentials securely, to not release credentials to anyone other than the holder (who may subsequently present them to a verifier), and to not corrupt nor lose credentials while they are in its care." Thus, the focus is on securely storing credentials, ensuring they are not released to unauthorized individuals, and maintaining the integrity of VCs in its possession.
 

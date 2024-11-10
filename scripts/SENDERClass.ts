@@ -1,6 +1,5 @@
 
-import * as crypto from 'crypto';
- 
+
 export class StoreEncVC {
     private store: Map<string,Buffer>;
 
