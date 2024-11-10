@@ -1,5 +1,6 @@
 import { ethers } from 'hardhat'
 
+//this script deploys the DIDregistry on the hardhat network
 async function main() {
      // We get the contract to deploy
     const RegistryContract = await ethers.getContractFactory('EthereumDIDRegistry')

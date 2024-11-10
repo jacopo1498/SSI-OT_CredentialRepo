@@ -50,6 +50,8 @@ const Color = {
     ));
   }
 
+
+//setting up stuff needed for the decentralized identity
 const issuer = new EthrDID({
   identifier: "did:ethr:0x7a69:0x038318535b54105d4a7aae60c08fc45f9687181b4fdfc625bd1a753fa7397fed75",
   privateKey: 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
@@ -88,7 +90,7 @@ const vcPayload: JwtCredentialPayload = {
       }
     }
   };
-//prepari la vc con la roba base (metadata, header ,ecc...) poi aggiungi gli attributi che ti servono dopo
+  
 vcPayload['vc']['credentialSubject']['nome']="pincopanco-encryptato";
 vcPayload['vc']['credentialSubject']['cognome']="pencopunco-encryptato";
 
@@ -102,7 +104,7 @@ const vcPayload2: JwtCredentialPayload = {
       }
     }
   };
-//prepari la vc con la roba base (metadata, header ,ecc...) poi aggiungi gli attributi che ti servono dopo
+  
 vcPayload2['vc']['credentialSubject']['Degree']="Bachelor";
 vcPayload2['vc']['credentialSubject']['Mnumber']="019283";
 
@@ -116,7 +118,7 @@ const vcPayload3: JwtCredentialPayload = {
       }
     }
   };
-//prepari la vc con la roba base (metadata, header ,ecc...) poi aggiungi gli attributi che ti servono dopo
+
 vcPayload3['vc']['credentialSubject']['TaxNumber']="2142414291659129721";
 vcPayload3['vc']['credentialSubject']['TaxBrachet']="5A";
 
@@ -133,7 +135,7 @@ vcPayload3['vc']['credentialSubject']['TaxBrachet']="5A";
 
    */
 
-//ID of VC: combination of iss, sub, iat (issuanceDate) -> hash? (+salt just in case)
+//ID of VC: combination of iss, sub, iat (issuanceDate) -> hash (+salt just in case)
 
 
 
@@ -189,7 +191,7 @@ async function main() {
         console.log(colorString(Color.FgMagenta,ids[i]));
     }
 
-    //now OT starts, sender (cred repo) must not know wich id th sender chooses
+    //now OT starts, sender (cred repo) must not know wich id the sender chooses
     //sender reads the vc stored int he repo and receiver chooses the one he whants
     console.log(colorString(Color.FgWhite, "receiver reads avaliable vc:"));
     for (let i = 0; i < ids.length; i++) {
@@ -224,8 +226,8 @@ async function main() {
             console.log("Secret #"+sender_choice+" as a Buffer:", encryptedVCBuffer);
         
             // Proceed with decryption
-            const decryptedVC = savedVCK_receiver.decryptVC(encryptedVCBuffer); // replace with your decryption function
-            console.log("Decrypted VC:", decryptedVC?.vc); // or any other encoding as needed
+            const decryptedVC = savedVCK_receiver.decryptVC(encryptedVCBuffer); 
+            console.log("Decrypted VC:", decryptedVC?.vc); 
             rec_vc = decryptedVC?.vc!;
             const verifiedCredentialrec = await verifyCredential(rec_vc, Res, {});
             console.log("Verified Credential:", verifiedCredentialrec);
