@@ -1,5 +1,5 @@
 
-
+//stores the kencrypted verified credentials, indexing them through their appended index
 export class StoreEncVC {
     private store: Map<string,Buffer>;
 

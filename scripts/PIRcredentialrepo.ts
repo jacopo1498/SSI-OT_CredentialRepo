@@ -202,7 +202,7 @@ async function main() {
     //now receiver chooses the desired vc let's say 3
     const sender_choice = 1;
     let rec_vc = "";
-    console.log(colorString(Color.FgCyan,"\nI choose secret n. " + (sender_choice)));
+    console.log(colorString(Color.FgCyan, "\nI choose secret n. " + (sender_choice)));
     
     //OT starts
     const OT = require('1-out-of-n')(IO);
@@ -213,7 +213,10 @@ async function main() {
          *  The sender (cred repo) calls:
          */
         OT.send( savedEVC_sender.listAllEncryptedVCs(), N, op_id);
-       
+        console.log(colorString(Color.FgMagenta,"Sender sends:"));
+        console.log(savedEVC_sender.listAllEncryptedVCs());
+        console.log(colorString(Color.FgMagenta,"to receiver"));
+
         /*
          *  The receiver (holder) calls:
          */
@@ -222,11 +225,12 @@ async function main() {
             const encryptedVCBuffer = Buffer.from(receivedData);
         
             // Now `encryptedVCBuffer` is a Buffer and can be used with decryption functions
-            console.log("Secret #"+sender_choice+" as a Buffer:", encryptedVCBuffer);
-        
+            console.log(colorString(Color.FgCyan,"Secret #"+sender_choice+" as a Buffer:")); 
+            console.log(encryptedVCBuffer);
+
             // Proceed with decryption
             const decryptedVC = savedVCK_receiver.decryptVC(encryptedVCBuffer); 
-            console.log("Decrypted VC:", decryptedVC?.vc); 
+            console.log(colorString(Color.FgCyan,"Decrypted VC:"+decryptedVC?.vc)); 
             rec_vc = decryptedVC?.vc!;
             const verifiedCredentialrec = await verifyCredential(rec_vc, Res, {});
             console.log("Verified Credential:", verifiedCredentialrec);
