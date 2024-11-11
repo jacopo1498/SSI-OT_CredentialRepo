@@ -19,7 +19,7 @@ However, the manager of the credential repository can still infer certain inform
 
 Using OT (Oblivious Transfer) allows the holder to access their VCs privately without any information being inferred about the stored VCs, as the "traffic" between the holder and the credential repository is concealed. This means that the credential repository cannot deduce which specific VCs are being accessed or any other details, ensuring enhanced privacy for the holder.
 
-    ![cred repo schema](./schema%20credential%20repository.png)
+![cred repo schema](./schema%20credential%20repository.png)
 
 This projects simulates a credential repository and a user communicating, it is meant to demonstrate the privacy preserving capailities of OT, the hardhat network is used to host the did registry necessary to verify did's.
 
