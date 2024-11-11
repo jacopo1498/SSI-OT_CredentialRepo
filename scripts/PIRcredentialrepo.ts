@@ -195,7 +195,7 @@ async function main() {
     //sender reads the vc stored int he repo and receiver chooses the one he whants
     console.log(colorString(Color.FgWhite, "receiver reads avaliable vc:"));
     for (let i = 0; i < ids.length; i++) {
-        console.log(colorString(Color.FgMagenta,ids[i]));
+        console.log(colorString(Color.FgCyan,ids[i]));
         console.log(colorString(Color.FgCyan,savedVCK_receiver.getNameVC(ids[i])!));
     }
 
@@ -213,8 +213,7 @@ async function main() {
          *  The sender (cred repo) calls:
          */
         OT.send( savedEVC_sender.listAllEncryptedVCs(), N, op_id);
-      
-      
+       
         /*
          *  The receiver (holder) calls:
          */
