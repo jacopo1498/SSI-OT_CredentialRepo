@@ -23,7 +23,7 @@ Using OT (Oblivious Transfer) allows the holder to access their VCs privately wi
 
 This projects simulates a credential repository and a user communicating, it is meant to demonstrate the privacy preserving capailities of OT, the hardhat network is used to host the did registry necessary to verify did's.
 
-The 1-out of-n protocol is is provided through the [1-out-of-n library](https://github.com/wyatt-howe/1-out-of-n) by wyatt-howe.
+The 1-out of-n protocol is is provided through the [1-out-of-n library](https://github.com/wyatt-howe/1-out-of-n) by wyatt-howe, from wich i also taken the io-protocol to to simulate the communication between repository and user.
 
 ## Istructions
 Start the hardhat node

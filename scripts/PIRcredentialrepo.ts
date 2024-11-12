@@ -1,4 +1,5 @@
 import { EthrDID } from 'ethr-did'
+import { ethers } from "hardhat";
 import { Issuer } from 'did-jwt-vc'
 import { Resolver } from 'did-resolver'
 import getResolver from 'ethr-did-resolver'

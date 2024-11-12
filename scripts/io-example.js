@@ -1,5 +1,6 @@
 /*
  *  Client-Server Communications
+    Simulated
  */
 var listeners = {};
 var mailbox = {};
