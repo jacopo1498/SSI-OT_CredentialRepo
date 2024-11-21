@@ -8,6 +8,7 @@ export class StoreKey {
     constructor() {
         this.store = new Map();
     }
+
     //THIS ASSUMES VC HAVE BEEN VERIFIED
     private extractVCFields(vcJwt: string): { iss: string; sub: string; iat: number } | null {
         try {
@@ -58,10 +59,15 @@ export class StoreKey {
         return Buffer.concat([iv, encryptedData, idBufferHex]);
     }
 
+    // Retrieves the encrypted VC from storage
+    private retrieveVCdata(id: string){
+        return this.store.get(id);
+    }
+    
     // Stores the encrypted VC key with a unique ID as the index
     public storeVCkey(vc: string,customName: string){
         const id = this.generateVCID(vc);
-        console.log("SAVED ID "+ id);
+        console.log("SAVED ID ----- "+ id);
         if (!id){
             console.error("error in the generation of the ID");
             return;
@@ -71,11 +77,6 @@ export class StoreKey {
         const encryptedVC = this.encryptVC(vc, key, id);
         this.store.set(id, {key:key, name:customName});  // Store encrypted VC key using generated ID
         return encryptedVC;
-    }
-
-    // Retrieves the encrypted VC from storage
-    private retrieveVCdata(id: string){
-        return this.store.get(id);
     }
 
     // Decrypts the VC using AES with a specified key and extracts the fixed-size ID code
@@ -102,6 +103,7 @@ export class StoreKey {
             id: id
         };
     }
+
     // Returns the name of the verified credentials given the id (to be used with )
     public getNameVC(id: string){
         const vcdata = this.retrieveVCdata(id);

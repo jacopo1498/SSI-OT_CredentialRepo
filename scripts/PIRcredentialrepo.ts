@@ -4,11 +4,11 @@ import { Issuer } from 'did-jwt-vc'
 import { Resolver } from 'did-resolver'
 import getResolver from 'ethr-did-resolver'
 import { JwtCredentialPayload, createVerifiableCredentialJwt, verifyCredential } from 'did-jwt-vc'
-import { StoreKey } from './RECEIVERClass';
-import { StoreEncVC } from './SENDERClass';
+import { StoreKey } from './ot_utilis/RECEIVERClass';
+import { StoreEncVC } from './ot_utilis/SENDERClass';
 
 //this is necessary for ot... basically simulates communication with a dummy socket curtesy of wyatt-howe
-var IO = require('./io-example.js');
+var IO = require('./ot_utilis/io-example.js');
 
 //this is just to show things in the terminal in a nicer way
 const Color = {
@@ -45,11 +45,6 @@ const Color = {
     return `${color}${msg}${Color.Reset}`;
   }
   
-  function colorLog(color:string, ...args: any[]) {
-    console.log(...args.map(
-     (it) => typeof it === "string" ? colorString(color, it) : it
-    ));
-  }
 
 
 //setting up stuff needed for the decentralized identity
@@ -146,24 +141,32 @@ async function main() {
     const N = 3;
     const op_id = '1in3ot';  
 
-    //RECEIVER IS CYAN
-    //SENDER IS PURPLE
+    //RECEIVER (subject) IS CYAN
+    //SENDER () IS PURPLE
 
     //user part
     //user encripts all the vc and keeps track of the matching between ID - key - name
     const vcJwt0 = await createVerifiableCredentialJwt(vcPayload, issuer);
     const vcJwt1 = await createVerifiableCredentialJwt(vcPayload2, issuer2);
     const vcJwt2 = await createVerifiableCredentialJwt(vcPayload3, issuer);
+
+    console.log(colorString(Color.BgWhite+Color.FgBlack,"\nVC one"));
     console.log(vcJwt0);
     const verifiedCredential0= await verifyCredential(vcJwt0, Res,{});
     console.log(verifiedCredential0)
+
+    console.log(colorString(Color.BgWhite+Color.FgBlack,"\nVC two"));
     console.log(vcJwt1);
     const verifiedCredential1= await verifyCredential(vcJwt1, Res,{});
     console.log(verifiedCredential1)
+
+    console.log(colorString(Color.BgWhite+Color.FgBlack,"\nVC three"));
     console.log(vcJwt2);
     const verifiedCredential2= await verifyCredential(vcJwt2, Res,{});
     console.log(verifiedCredential2)
 
+
+    console.log(colorString(Color.FgCyan, "subject encrypts VC and stores id-key-name combo"));
     const EncVC0 =savedVCK_receiver.storeVCkey(vcJwt0,"test-identità dig");
     const EncVC1 =savedVCK_receiver.storeVCkey(vcJwt1,"test-università");
     const EncVC2 =savedVCK_receiver.storeVCkey(vcJwt2,"test-tasse");
@@ -171,63 +174,69 @@ async function main() {
     if(!EncVC0 || !EncVC1 || !EncVC2){
         console.error("error in encrypting VC")
     }
-    console.log(colorString(Color.FgWhite, "encrypted VC:"));
+    console.log(colorString(Color.BgWhite+Color.FgBlack, "\nencrypted VC:"));
     console.log(colorString(Color.FgCyan, EncVC0!.toString('utf-8')));
-    console.log(colorString(Color.FgWhite, "encrypted VC:"));
+    console.log(colorString(Color.BgWhite+Color.FgBlack, "\nencrypted VC:"));
     console.log(colorString(Color.FgCyan, EncVC1!.toString('utf-8')));
-    console.log(colorString(Color.FgWhite, "encrypted VC:"));
+    console.log(colorString(Color.BgWhite+Color.FgBlack, "\nencrypted VC:"));
     console.log(colorString(Color.FgCyan, EncVC2!.toString('utf-8')));
 
-
+    //pretend to send the VC's
+    console.log(colorString(Color.FgCyan, "\nsubject sends all encrypted VC's with appended ID"));
 
     //cred rep part
+    console.log(colorString(Color.FgMagenta,"\ncred repo receives EVC, extracts the ID and stores the combination ID-VC"));
     //the repo saves the encripted vc it recievs indexing them on the id appended to the evc
     if(!savedEVC_sender.storeEVC(EncVC0!) || !savedEVC_sender.storeEVC(EncVC1!) || !savedEVC_sender.storeEVC(EncVC2!)){
         console.error("error in storing the Enc VC");
     }
 
-    console.log(colorString(Color.FgWhite, "stored vc in the cred rep:"));
+    console.log(colorString(Color.BgWhite+Color.FgBlack, "\nstored vc in the cred rep:"));
+    console.log(colorString(Color.FgMagenta,"in the next interaction the server present avaliable VC's to the subject"));
     const ids = savedEVC_sender.listAllIds();
     for (let i = 0; i < ids.length; i++) {
         console.log(colorString(Color.FgMagenta,ids[i]));
     }
 
     //now OT starts, sender (cred repo) must not know wich id the sender chooses
-    //sender reads the vc stored int he repo and receiver chooses the one he whants
-    console.log(colorString(Color.FgWhite, "receiver reads avaliable vc:"));
+    //sender reads the vc stored int he repo and receiver chooses the one he wants (figures out id-names binding)
+    console.log(colorString(Color.BgWhite+Color.FgBlack, "\nreceiver reads avaliable vc"));
+    console.log(colorString(Color.FgCyan,"retrive name of vc from stored combo, id -> name"));
+
     for (let i = 0; i < ids.length; i++) {
         console.log(colorString(Color.FgCyan,ids[i]));
         console.log(colorString(Color.FgCyan,savedVCK_receiver.getNameVC(ids[i])!));
     }
 
-    //now receiver chooses the desired vc let's say 3
+    //now receiver chooses the desired vc
+    console.log(colorString(Color.BgWhite+Color.FgBlack, "\nreceiver chooses the desired vc"));
     const sender_choice = 1;
     let rec_vc = "";
-    console.log(colorString(Color.FgCyan, "\nI choose secret n. " + (sender_choice)));
+    console.log(colorString(Color.FgCyan, "sender choose secret n. " + (sender_choice)));
     
     //OT starts
     const OT = require('1-out-of-n')(IO);
 
-    await OT.then(async function (OT: any) {
+    await OT.then(async function (OT: { send: (arg0: Uint8Array[], arg1: number, arg2: string) => void; receive: (arg0: number, arg1: number, arg2: string) => Promise<Uint8Array> }) {
 
         /*
          *  The sender (cred repo) calls:
          */
         OT.send( savedEVC_sender.listAllEncryptedVCs(), N, op_id);
         console.log(colorString(Color.FgMagenta,"Sender sends:"));
-        console.log(savedEVC_sender.listAllEncryptedVCs());
+        console.log("\x1b[45m",savedEVC_sender.listAllEncryptedVCs(),'\x1b[0m');
         console.log(colorString(Color.FgMagenta,"to receiver"));
 
         /*
          *  The receiver (holder) calls:
          */
-        await OT.receive(sender_choice - 1, N, op_id).then(async (receivedData: Uint8Array) => {
+        OT.receive(sender_choice - 1, N, op_id).then(async (receivedData: Uint8Array) => {
             // Convert Uint8Array to Buffer
             const encryptedVCBuffer = Buffer.from(receivedData);
         
             // Now `encryptedVCBuffer` is a Buffer and can be used with decryption functions
             console.log(colorString(Color.FgCyan,"Secret #"+sender_choice+" as a Buffer:")); 
-            console.log(encryptedVCBuffer);
+            console.log("\x1b[46m",encryptedVCBuffer,'\x1b[0m');
 
             // Proceed with decryption
             const decryptedVC = savedVCK_receiver.decryptVC(encryptedVCBuffer); 
@@ -237,7 +246,6 @@ async function main() {
             console.log("Verified Credential:", verifiedCredentialrec);
         });
       });
-
 
 };
 

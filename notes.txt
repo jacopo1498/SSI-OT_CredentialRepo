@@ -1,19 +1,8 @@
-0 DEPLOY THE REGISTRY
-1 create did for issuer
-2 create did for holder 
-3 create vc signed by issuer with holder info
-4 verify it (same file)
-
- create did for verifier -> not necessary you only need the jwt and a didresolver to verify a VC
- 
- now we need to take these credentials and send them somewhere with OT (same file?) 
- OT extention
-
- OT WITH CRED REPO
-   0-choose an ID and a key for a VC to use (store binding ID-VC name) DONE
+OT WITH CRED REPO
+   0-choose an ID and a key for a VC to use (store binding ID-VC-NAME name) DONE
    1-take my VC and encrypt them, append ID to recognize them later DONE
    2-give server encrypted VC with an ID  DONE 
    3-server extract ID (wich has no meaning for him) done
    4-START OF OT, server presents ID's to choose done
-   5-i recognize an ID and choose the index appropriately (receiver does not know this) almost
-   6-throught OT i receive the desired VC and i decrypt it whith the corresponding key
+   5-i recognize an ID and choose the index appropriately (receiver does not know this) done 
+   6-throught OT i receive the desired VC and i decrypt it whith the corresponding key done
