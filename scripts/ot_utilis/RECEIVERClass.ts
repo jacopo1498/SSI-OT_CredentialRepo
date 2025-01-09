@@ -40,7 +40,6 @@ export class StoreKey {
         // Hash the combined string with SHA-256
         const id = crypto.createHash('sha256').update(baseString).digest('hex');
         return id;
-        //return also salt? do i want to be able to reconstruct the VCid?
     }
 
     // Encrypts the VC using AES and a specified key
