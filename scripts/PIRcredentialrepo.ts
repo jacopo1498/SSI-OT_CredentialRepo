@@ -142,7 +142,7 @@ async function main() {
     const op_id = '1in3ot';  
 
     //RECEIVER (subject) IS CYAN
-    //SENDER () IS PURPLE
+    //SENDER (Storage provider) IS PURPLE
 
     //user part
     //user encripts all the vc and keeps track of the matching between ID - key - name
