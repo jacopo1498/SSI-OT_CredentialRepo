@@ -51,7 +51,7 @@ export class StoreKey {
             cipher.update(vc),
             cipher.final(),
         ]);
-        // Convert hex ID to a UTF-8 string (or directly to UTF-8 buffer if preferred)
+        
         const idBufferHex = Buffer.from(id, 'hex');  // First, hex to buffer
 
         // Concatenate IV, encrypted data, and fixed-size ID code
