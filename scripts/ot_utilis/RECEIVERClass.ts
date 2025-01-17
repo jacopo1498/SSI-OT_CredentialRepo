@@ -44,19 +44,19 @@ export class StoreKey {
 
     // Encrypts the VC using AES and a specified key
     private encryptVC(vc: string, key: Buffer, id: string): Buffer {
-        const iv = crypto.randomBytes(16);
-        const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+        const iv = crypto.randomBytes(12); // AES-GCM recommends a 12-byte IV
+        const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
 
         const encryptedData = Buffer.concat([
             cipher.update(vc),
             cipher.final(),
         ]);
         
+        const authTag = cipher.getAuthTag();  // GCM requires this tag for authentication
         const idBufferHex = Buffer.from(id, 'hex');  // First, hex to buffer
 
         // Concatenate IV, encrypted data, and fixed-size ID code
-        return Buffer.concat([iv, encryptedData, idBufferHex]);
-    }
+        return Buffer.concat([iv, encryptedData, authTag, idBufferHex]);    }
 
     // Retrieves the encrypted VC from storage
     private retrieveVCdata(id: string){
@@ -80,27 +80,33 @@ export class StoreKey {
 
     // Decrypts the VC using AES with a specified key and extracts the fixed-size ID code
     public decryptVC(encryptedData: Buffer){
-        const iv = encryptedData.subarray(0, 16);  // Extract IV from the first 16 bytes
-        const encryptedVC = encryptedData.subarray(16, -32);  // Extract encrypted data portion
+        const iv = encryptedData.subarray(0, 12);   // Extract IV (12 bytes for GCM)
+        const encryptedVC = encryptedData.subarray(12, -48);  // Adjusted for tag size
+        const authTag = encryptedData.subarray(-48, -32);  // Extract Auth Tag (16 bytes)
         const idCodeBuffer = encryptedData.subarray(-32);  // Extract the last 32 bytes as ID code
+
         const vcdata = (this.retrieveVCdata(idCodeBuffer.toString('hex')));
         if (!vcdata){
             console.error("error in the retrival of the key");
             return;
         }
-        const decipher = crypto.createDecipheriv('aes-256-cbc', vcdata.key, iv);
 
-        const decryptedVC = Buffer.concat([
-            decipher.update(encryptedVC),
-            decipher.final(),
-        ]);
+        const decipher = crypto.createDecipheriv('aes-256-gcm', vcdata.key, iv);
+        decipher.setAuthTag(authTag);  // Must set the auth tag for GCM mode to work
 
-        const id = idCodeBuffer.toString('utf-8').replace(/\0/g, '');  // Convert ID buffer to string, trim padding
-
-        return {
-            vc: decryptedVC.toString(),
-            id: id
-        };
+        try {
+            const decryptedVC = Buffer.concat([
+                decipher.update(encryptedVC),
+                decipher.final()
+            ]);
+            return {
+                vc: decryptedVC.toString(),
+                id: idCodeBuffer.toString('utf-8').replace(/\0/g, '')
+            };
+        } catch (error) {
+            console.error("Decryption failed, invalid tag:");
+            return null;
+        }
     }
 
     // Returns the name of the verified credentials given the id (to be used with )
